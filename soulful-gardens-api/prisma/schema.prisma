@@ -1,0 +1,43 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model menu {
+  id      Int       @id @default(autoincrement())
+  name    String    @db.VarChar(20)
+  path    String    @db.VarChar(20)
+  submenu submenu[]
+}
+
+model submenu {
+  id      Int    @id @default(autoincrement())
+  name    String @db.VarChar(20)
+  path    String @db.VarChar(20)
+  menu_id Int
+  menu    menu   @relation(fields: [menu_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "submenu_fk0")
+}
+
+model user {
+  id       Int           @id @default(autoincrement())
+  name     String        @db.VarChar(100)
+  email    String        @unique @db.VarChar(100)
+  password String        @db.VarChar(100)
+  profile  user_profile?
+  status   user_status?  @default(PENDING)
+}
+
+enum user_profile {
+  ADMIN
+  NORMAL_USER
+}
+
+enum user_status {
+  PENDING
+  ACTIVE
+  BLOCKED
+}
